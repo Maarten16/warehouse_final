@@ -29,8 +29,13 @@ int Pallet::getRemainingSpace() {//gets remaining pallet space
 
 bool Pallet::reallocateEmptyPallet(std::string itemName, int itemCapacity) {
     //itemCont is already 0
-    this->itemName = "";
-    this->itemCapacity = 0;
+    if(this->itemCount == 0) {
+        this->itemName = "";
+        this->itemCapacity = 0;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //takes a single item from pallet
