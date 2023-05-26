@@ -238,5 +238,43 @@ TEST_CASE("Rearrange shelf with quallified, but busy, employee", "Warehouse::rea
 
 TEST_CASE("pickItems when item not available in any shelf", "Warehouse::pickItems"){
     Warehouse warehouse = Warehouse();
+    Pallet pallet1 = Pallet("books", 100, 20);
+    Pallet pallet2 = Pallet("pencils", 100, 40);
+    Pallet pallet3 = Pallet("markers", 100, 30);
+    Pallet pallet4 = Pallet("books", 100, 10);
     Shelf shelf1 = Shelf();
+    shelf1.pallets = {pallet1, pallet2, pallet3, pallet4};
+    warehouse.addShelf(shelf1);
+
+    REQUIRE(warehouse.pickItems("rulers", 10) == 0);
+    REQUIRE(warehouse.pickItems("books", 10) == 1);
+}
+
+TEST_CASE("pickItems with more items than available on all shelves combined", "warehouse::pickItems"){
+    Warehouse warehouse = Warehouse();
+    Pallet pallet1 = Pallet("books", 100, 20);
+    Pallet pallet2 = Pallet("pencils", 100, 40);
+    Pallet pallet3 = Pallet("markers", 100, 30);
+    Pallet pallet4 = Pallet("books", 100, 10);
+    Shelf shelf1 = Shelf();
+    shelf1.pallets = {pallet1, pallet2, pallet3, pallet4};
+    warehouse.addShelf(shelf1);
+
+    REQUIRE(warehouse.pickItems("books", 1000) == 0);
+    REQUIRE(warehouse.pickItems("pencils", 100) == 0);
+}
+
+TEST_CASE("pickItems from multiple pallets", "warehouse::pickitems"){
+    Warehouse warehouse = Warehouse();
+    Pallet pallet1 = Pallet("pencils", 100, 75);
+    Pallet pallet2 = Pallet("books", 100, 40);
+    Pallet pallet3 = Pallet("pencils", 100, 90);
+    Pallet pallet4 = Pallet("pencils", 100, 90);
+    Shelf shelf1 = Shelf();
+    shelf1.pallets = {pallet1, pallet2, pallet3, pallet4};
+    warehouse.addShelf(shelf1);
+
+    REQUIRE(warehouse.pickItems("pencils", 190) == 1);
+    REQUIRE(warehouse.pickItems("pencils", 255) == 1);
+    REQUIRE(warehouse.pickItems("pencils", 256) == 0);
 }
